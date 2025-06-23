@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:plant_it/app_exception.dart';
+import 'package:plant_it/change_notifiers.dart';
 import 'package:plant_it/commons.dart';
+import 'package:plant_it/dropdown.dart';
 import 'package:plant_it/dto/event_dto.dart';
 import 'package:plant_it/environment.dart';
-import 'package:plant_it/dropdown.dart';
-import 'package:plant_it/change_notifiers.dart';
 import 'package:plant_it/theme.dart';
 import 'package:plant_it/toast/toast_manager.dart';
 import 'package:provider/provider.dart';
@@ -155,7 +155,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextFieldSingleDropDown(
                     initialValue: _linkedPlant,
                     text: AppLocalizations.of(context).plants,
@@ -176,7 +176,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextFieldSingleDropDown(
                     initialValue: formatEventType(_eventType),
                     text: AppLocalizations.of(context).events,
@@ -199,9 +199,7 @@ class _EditEventPageState extends State<EditEventPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextField(
                     readOnly: true,
                     controller:

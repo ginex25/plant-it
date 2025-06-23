@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:plant_it/app_exception.dart';
 import 'package:plant_it/commons.dart';
 import 'package:plant_it/dropdown.dart';
@@ -108,7 +108,7 @@ class _AddReminderState extends State<AddReminder> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextFieldSingleDropDown(
                       initialValue: getLocaleEvent(context, "watering"),
                       text: AppLocalizations.of(context).events,
@@ -131,9 +131,7 @@ class _AddReminderState extends State<AddReminder> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextField(
                       readOnly: true,
                       controller: TextEditingController(
