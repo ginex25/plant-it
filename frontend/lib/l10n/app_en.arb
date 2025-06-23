@@ -426,6 +426,6 @@
       }
     }
   },
-  "selectAll": "Select All",
-  "deselectAll": "Deselect All"
+  "selectAll": "Select all",
+  "deselectAll": "Deselect all"
 }

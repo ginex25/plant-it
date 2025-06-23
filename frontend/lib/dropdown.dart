@@ -142,6 +142,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   late List<T> _filteredItems;
   late List<T> _selected;
 
@@ -150,24 +151,14 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
     super.initState();
     _filteredItems = widget.items;
     _selected = List.from(widget.selectedItems);
-    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
     _removeDropdown();
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onSearchChanged() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredItems = widget.items
-          .where((item) =>
-              widget.itemBuilder(item).toString().toLowerCase().contains(query))
-          .toList();
-    });
   }
 
   void _toggleDropdown() {
@@ -243,6 +234,31 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                                       "${AppLocalizations.of(context).search}...",
                                   border: OutlineInputBorder(),
                                 ),
+                                onChanged: (value) {
+                                  if (value.isEmpty) {
+                                    setState(() {
+                                      _filteredItems = widget.items;
+                                    });
+
+                                    menuSetState(() {});
+
+                                    return;
+                                  }
+
+                                  final query = value.toLowerCase();
+
+                                  setState(() {
+                                    _filteredItems = widget.items
+                                        .where((item) => widget
+                                            .itemBuilder(item)
+                                            .toString()
+                                            .toLowerCase()
+                                            .contains(query))
+                                        .toList();
+                                  });
+
+                                  menuSetState(() {});
+                                },
                               ),
                             ),
                           ),
@@ -279,9 +295,11 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                           const Divider(height: 0.5),
                         Expanded(
                           child: Scrollbar(
+                            controller: _scrollController,
                             thumbVisibility: true,
                             child: ListView(
                               shrinkWrap: true,
+                              controller: _scrollController,
                               padding: EdgeInsets.zero,
                               children: _filteredItems.map((item) {
                                 final selected = _selected.contains(item);
