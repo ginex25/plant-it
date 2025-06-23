@@ -1,6 +1,5 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TextFieldMultipleDropDown extends StatefulWidget {
   final List<String> options;
@@ -44,184 +43,25 @@ class _TextFieldMultipleDropDownState extends State<TextFieldMultipleDropDown> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<String>(
-          iconStyleData: IconStyleData(
-            icon: _selectedItems.isEmpty
-                ? const Icon(
-                    Icons.arrow_drop_down,
-                  )
-                : IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedItems.clear();
-                      });
-                    },
-                    icon: widget.disabled ?? false
-                        ? const SizedBox()
-                        : IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              setState(() {
-                                _selectedItems.clear();
-                              });
-                              _textEditingController.clear();
-                              widget.onSelectedItemsChanged([]);
-                            }),
-                    splashRadius: 14,
-                    constraints: const BoxConstraints(minWidth: 0),
-                    padding: EdgeInsets.zero,
-                  ),
-            iconSize: 18,
+    return CustomDropdown<String>(
+      items: widget.options,
+      isMultiSelect: true,
+      showSearchField: true,
+      showSelectAllButton: true,
+      hintText: widget.text,
+      itemBuilder: (item) {
+        return Text(
+          item,
+          style: TextStyle(
+            fontSize: 16,
+            overflow: TextOverflow.ellipsis,
+            color: Theme.of(context).textTheme.bodyLarge!.color,
           ),
-          isExpanded: true,
-          hint: Text(
-            widget.text,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-          items: widget.options.map((item) {
-            return DropdownMenuItem(
-              value: item,
-              //disable default onTap to avoid closing menu when selecting an item
-              enabled: !(widget.disabled ?? true),
-              child: StatefulBuilder(
-                builder: (context, menuSetState) {
-                  final isSelected = _selectedItems.contains(item);
-                  return InkWell(
-                    onTap: () {
-                      isSelected
-                          ? _selectedItems.remove(item)
-                          : _selectedItems.add(item);
-                      widget.onSelectedItemsChanged(_selectedItems);
-                      //This rebuilds the StatefulWidget to update the button's text
-                      setState(() {});
-                      //This rebuilds the dropdownMenu Widget to update the check mark
-                      menuSetState(() {});
-                    },
-                    child: Container(
-                      height: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                          color: _selectedItems.contains(item)
-                              ? const Color.fromRGBO(31, 57, 48, 1)
-                              : null),
-                      child: Row(
-                        children: [
-                          if (isSelected)
-                            const Icon(Icons.check_box_outlined)
-                          else
-                            const Icon(Icons.check_box_outline_blank),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(context)
-                                    .inputDecorationTheme
-                                    .hintStyle!
-                                    .color,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          }).toList(),
-          value: _selectedItems.isEmpty ? null : _selectedItems.last,
-          onChanged: widget.disabled ?? false ? null : (value) {},
-          selectedItemBuilder: (context) {
-            return widget.options.map(
-              (item) {
-                return Container(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(_selectedItems.join(', '),
-                      style: TextStyle(
-                        fontSize: 14,
-                        overflow: TextOverflow.ellipsis,
-                        color: (widget.disabled ?? false)
-                            ? Colors.grey
-                            : Theme.of(context).textTheme.bodyLarge!.color,
-                      )),
-                );
-              },
-            ).toList();
-          },
-          buttonStyleData: ButtonStyleData(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            height: 50,
-            decoration: BoxDecoration(
-                border: Border.all(
-                    color: Theme.of(context)
-                        .inputDecorationTheme
-                        .enabledBorder!
-                        .borderSide
-                        .color),
-                borderRadius: const BorderRadius.all(Radius.circular(5))),
-            //width: 200,
-          ),
-          dropdownStyleData: const DropdownStyleData(
-            maxHeight: 300,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(24, 44, 37, 1),
-            ),
-          ),
-          menuItemStyleData: const MenuItemStyleData(
-            height: 40,
-          ),
-          dropdownSearchData: DropdownSearchData(
-            searchController: _textEditingController,
-            searchInnerWidgetHeight: 50,
-            searchInnerWidget: Container(
-              height: 50,
-              padding: const EdgeInsets.only(
-                top: 8,
-                bottom: 4,
-                right: 8,
-                left: 8,
-              ),
-              child: TextFormField(
-                autofocus: true,
-                expands: true,
-                maxLines: null,
-                controller: _textEditingController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ),
-                  hintText: "${AppLocalizations.of(context).search}...",
-                  hintStyle: const TextStyle(fontSize: 12, color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-            searchMatchFn: (item, searchValue) {
-              return item.value
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchValue.toLowerCase());
-            },
-          ),
-          //This to clear the search value when you close the menu
-          onMenuStateChange: (isOpen) {
-            if (!isOpen) {
-              _textEditingController.clear();
-            }
-          },
-        ),
-      ),
+        );
+      },
+      onChanged: (value) {
+        widget.onSelectedItemsChanged(value);
+      },
     );
   }
 }
@@ -248,78 +88,268 @@ class TextFieldSingleDropDown extends StatefulWidget {
 }
 
 class _TextFieldSingleDropDownState extends State<TextFieldSingleDropDown> {
-  String? _selectedValue;
+  @override
+  Widget build(BuildContext context) {
+    return CustomDropdown<String>(
+      isMultiSelect: false,
+      showSearchField: false,
+      items: widget.options,
+      selectedItems: widget.initialValue != null ? [widget.initialValue!] : [],
+      itemBuilder: (item) {
+        return Text(
+          item,
+          style: TextStyle(
+            fontSize: 16,
+            overflow: TextOverflow.ellipsis,
+            color: Theme.of(context).textTheme.bodyLarge!.color,
+          ),
+        );
+      },
+      onChanged: (value) {
+        widget.onSelectedItemsChanged(value);
+      },
+    );
+  }
+}
+
+class CustomDropdown<T> extends StatefulWidget {
+  final List<T> items;
+  final List<T> selectedItems;
+  final bool isMultiSelect;
+  final bool showSearchField;
+  final bool showSelectAllButton;
+  final String hintText;
+  final Widget Function(T item) itemBuilder;
+  final ValueChanged onChanged;
+
+  const CustomDropdown({
+    super.key,
+    required this.items,
+    required this.itemBuilder,
+    required this.onChanged,
+    this.selectedItems = const [],
+    this.isMultiSelect = false,
+    this.showSearchField = true,
+    this.showSelectAllButton = false,
+    this.hintText = "Bitte auswählen...",
+  });
+
+  @override
+  State<CustomDropdown<T>> createState() => _CustomDropdownState<T>();
+}
+
+class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+  final TextEditingController _searchController = TextEditingController();
+  late List<T> _filteredItems;
+  late List<T> _selected;
 
   @override
   void initState() {
-    _selectedValue = widget.initialValue;
     super.initState();
+    _filteredItems = widget.items;
+    _selected = List.from(widget.selectedItems);
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _removeDropdown();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredItems = widget.items
+          .where((item) =>
+              widget.itemBuilder(item).toString().toLowerCase().contains(query))
+          .toList();
+    });
+  }
+
+  void _toggleDropdown() {
+    if (_overlayEntry == null) {
+      _overlayEntry = _createOverlayEntry();
+      Overlay.of(context).insert(_overlayEntry!);
+    } else {
+      _removeDropdown();
+    }
+
+    setState(() {});
+  }
+
+  void _removeDropdown() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    _searchController.clear();
+    setState(() {
+      _filteredItems = widget.items;
+    });
+  }
+
+  void _toggleAll(bool selectAll) {
+    setState(() {
+      _selected = selectAll ? List.from(widget.items) : [];
+    });
+    widget.onChanged(_selected);
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    Size size = renderBox.size;
+    Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    return OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: _removeDropdown,
+              child: Container(),
+            ),
+          ),
+          Positioned(
+            width: size.width,
+            left: offset.dx,
+            top: offset.dy + size.height,
+            child: CompositedTransformFollower(
+              link: _layerLink,
+              offset: Offset(0.0, size.height + 5.0),
+              showWhenUnlinked: false,
+              child: Material(
+                elevation: 4.0,
+                child: StatefulBuilder(
+                  builder: (context, menuSetState) => Container(
+                    constraints: BoxConstraints(maxHeight: 300),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).dialogTheme.backgroundColor,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.showSearchField)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              height: 50,
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: InputDecoration(
+                                  hintText:
+                                      "${AppLocalizations.of(context).search}...",
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (widget.isMultiSelect && widget.showSelectAllButton)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  setState(
+                                    () => _toggleAll(true),
+                                  );
+                                  menuSetState(() {});
+                                },
+                                child: Text(
+                                    AppLocalizations.of(context).selectAll),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(
+                                    () => _toggleAll(false),
+                                  );
+
+                                  menuSetState(() {});
+                                },
+                                child: Text(
+                                    AppLocalizations.of(context).deselectAll),
+                              ),
+                            ],
+                          ),
+                        if (widget.showSearchField ||
+                            (widget.showSelectAllButton &&
+                                widget.isMultiSelect))
+                          const Divider(height: 0.5),
+                        Expanded(
+                          child: Scrollbar(
+                            thumbVisibility: true,
+                            child: ListView(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              children: _filteredItems.map((item) {
+                                final selected = _selected.contains(item);
+
+                                return widget.isMultiSelect
+                                    ? CheckboxListTile(
+                                        title: widget.itemBuilder(item),
+                                        value: selected,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            value == true
+                                                ? _selected.add(item)
+                                                : _selected.remove(item);
+                                          });
+                                          menuSetState(() {});
+                                          widget.onChanged(_selected);
+                                        },
+                                      )
+                                    : ListTile(
+                                        title: widget.itemBuilder(item),
+                                        onTap: () {
+                                          setState(() {
+                                            _selected = [item];
+                                            widget.onChanged(_selected.last);
+                                            _removeDropdown();
+                                          });
+                                        },
+                                      );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton2<String>(
-          isExpanded: true,
-          hint: Text(
-            widget.text,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: GestureDetector(
+        onTap: _toggleDropdown,
+        child: AbsorbPointer(
+          child: TextFormField(
+            readOnly: true,
+            decoration: InputDecoration(
+              hintText: widget.hintText,
+              suffixIcon: _overlayEntry == null
+                  ? const Icon(Icons.arrow_drop_down)
+                  : const Icon(Icons.arrow_drop_up),
+            ),
+            style: TextStyle(
+              overflow: TextOverflow.ellipsis,
+            ),
+            controller: TextEditingController(
+              text: widget.isMultiSelect
+                  ? _selected.map((e) => e.toString()).join(', ')
+                  : (_selected.isNotEmpty ? _selected.first.toString() : ''),
             ),
           ),
-          items: widget.options
-              .map((String item) => DropdownMenuItem<String>(
-                    enabled: !(widget.disabled ?? false),
-                    value: item,
-                    child: Text(
-                      item,
-                      style: TextStyle(
-                          fontSize: 14,
-                          color:
-                              Theme.of(context).textTheme.bodyLarge!.color),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
-              .toList(),
-          value: _selectedValue,
-          onChanged: (String? value) {
-            setState(() {
-              _selectedValue = value;
-            });
-            if (value != null) {
-              widget.onSelectedItemsChanged(value);
-            }
-          },
-          buttonStyleData: ButtonStyleData(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            height: 50,
-            decoration: BoxDecoration(
-                border: Border.all(
-                    color: Theme.of(context)
-                        .inputDecorationTheme
-                        .enabledBorder!
-                        .borderSide
-                        .color),
-                borderRadius: const BorderRadius.all(Radius.circular(5))),
-            //width: 200,
-          ),
-          iconStyleData: const IconStyleData(
-              icon: Icon(
-                Icons.arrow_drop_down,
-              ),
-              iconSize: 14,
-              iconEnabledColor: Colors.grey),
-          dropdownStyleData: const DropdownStyleData(
-            maxHeight: 300,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(24, 44, 37,
-                  1), // this is the color background for all dropdown
-            ),
-          ),
-          menuItemStyleData:
-              const MenuItemStyleData(height: 40, padding: EdgeInsets.all(8)),
         ),
       ),
     );

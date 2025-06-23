@@ -425,5 +425,7 @@
         "example": "1"
       }
     }
-  }
+  },
+  "selectAll": "Select All",
+  "deselectAll": "Deselect All"
 }

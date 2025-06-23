@@ -119,7 +119,7 @@ class _AddNewEventPageState extends State<AddNewEventPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextFieldMultipleDropDown(
                       text: AppLocalizations.of(context).plants,
                       options: widget.env.plants
@@ -143,7 +143,7 @@ class _AddNewEventPageState extends State<AddNewEventPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextFieldMultipleDropDown(
                       text: AppLocalizations.of(context).events,
                       options: widget.env.eventTypes
